@@ -38,7 +38,7 @@ Contoh situasi : ketika sebuah tim teridiri dari 2 orang, satu mengerjakan fitur
 Jika satu tim memakai versi Go yang berbeda, itu tidak akan menjadi masalah besar dan bisa tetap berjalan asalkan fitur yang diapakai itu adalah fitur dasar. Namun itu akan menjadi masalah nyata ketika teman satu tim memakai fitur terbaru pada versi Go yang lebih baru, dan saya masih memakai Go versi lama. Di saat itulah versi Go yang lama tidak akan bisa menjalankan kode nya.
 
 ## Catatan Merge Conflict
-baris return pada fungsi CetakInfo mengalami confilict, disebabkan karena saya mengubah format output yang ada di branch main, nah sedangkan di branch fitur-sapaan itu saya juga menambahkan Sapa(nama) pada baris yang sama dengan return tadi. Sehingga karna perubahan nya ada pada baris yang sama , maka git tidak tahu versi yang mau dipakai yang mana. maka perlu solve manual dengan merge kedua perubahannya. 
+baris return pada fungsi CetakInfo mengalami conflict, disebabkan karena saya mengubah format output yang ada di branch main, nah sedangkan di branch fitur-sapaan itu saya juga menambahkan Sapa(nama) pada baris yang sama dengan return tadi. Sehingga karna perubahan nya ada pada baris yang sama , maka git tidak tahu versi yang mau dipakai yang mana. maka perlu solve manual dengan merge kedua perubahannya. 
 
 ## Kenapa .gitignore Penting
 gitignore penting untuk tidak membuat repo jadi penuh oleh file/folder yang tidak perlu. apalagi misal file/folder config, atau kode pada file .exe yang dianggap berubah padahal sama, akan memenuhi repo dan commit nya
