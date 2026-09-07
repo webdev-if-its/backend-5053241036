@@ -1,4 +1,4 @@
-# backend-nrp
+# backend-5053241036
 
 Repo tugas mata kuliah **Pengembangan Backend Dasar**, dibuat dari template [`webdev-if-its/backend-template`](https://github.com/webdev-if-its/backend-template). Ganti judul di atas jadi nama repo kalian sendiri (`backend-nrp`, contoh: `backend-5025201012`).
 
@@ -27,15 +27,15 @@ Kalau dosen memperbaiki sesuatu di pertemuan yang sudah dirilis (mis. ada bug di
 Bagian di bawah ini **isi bertahap** sesuai level yang sedang kalian kerjakan (lihat `pertemuan-01/SOAL.md`) — heading-nya dicek otomatis, jangan diganti namanya.
 
 ## Identitas
-- Nama: (tulis di sini)
-- NRP: (tulis di sini)
-- Kelas: (tulis di sini)
+- Nama: Zahra Fidela Ramadhiani Tjahjono
+- NRP: 5053241036
+- Kelas: M (RPL)
 
 ## Commit vs Push
-(tulis di sini)
-
+Commit adalah kegiatan menyimpan perubahan file, dan Push adalah kegiatan mengupload perubahan tadi ke github.
+Contoh situasi : ketika sebuah tim teridiri dari 2 orang, satu mengerjakan fitur A, dan satunya lagi mengerjakan fitur B, dimana seharusnya fitur B ini bisa dikerjakan ketika fitur A selesai. Lalu orang fitur A sudah selesai mengerjakan, dia commit dengan message "fitur A done" tepat waktu. namun dia lupa belum push ke github, sehingga orang fitur B yang seharusnya sudah bisa langsung mengerjakan jadi terlambat karna dia belum bisa menerima hasil dari fitur A di repo mereka.
 ## Reproducibility
-(tulis di sini)
+Jika satu tim memakai versi Go yang berbeda, itu tidak akan menjadi masalah besar dan bisa tetap berjalan asalkan fitur yang diapakai itu adalah fitur dasar. Namun itu akan menjadi masalah nyata ketika teman satu tim memakai fitur terbaru pada versi Go yang lebih baru, dan saya masih memakai Go versi lama. Di saat itulah versi Go yang lama tidak akan bisa menjalankan kode nya.
 
 ## Catatan Merge Conflict
 (tulis di sini)
