@@ -63,7 +63,7 @@
 				return nil
 			}
 		}
-		panic("implementasi di level 5?")
+		return ErrTugasTidakDitemukan
 	}
 
 	// HapusTugasTercatat memanggil HapusTugas, lalu memakai defer untuk
