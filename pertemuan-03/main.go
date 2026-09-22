@@ -1,16 +1,17 @@
-	package main
+package main
 
-	import (
-		"errors"
-		"fmt"
-		"net/http"
-	)
+import (
+	"errors"
+	"fmt"
+	"net/http"
+	"strings"
+)
 
-	// TODO(Level 1): lihat SOAL.md untuk kontrak lengkap tiap fungsi di bawah.
-	// Ganti setiap "panic" dengan implementasi yang benar.
+// TODO(Level 1): lihat SOAL.md untuk kontrak lengkap tiap fungsi di bawah.
+// Ganti setiap "panic" dengan implementasi yang benar.
 
-	// ErrTugasTidakDitemukan dikembalikan ketika ID tugas yang dicari/dihapus
-	// tidak ada di daftar.
+// ErrTugasTidakDitemukan dikembalikan ketika ID tugas yang dicari/dihapus
+// tidak ada di daftar.
 	var ErrTugasTidakDitemukan = errors.New("tugas tidak ditemukan")
 
 	// ErrInputKosong dikembalikan ketika judul tugas yang diberikan kosong
@@ -33,6 +34,10 @@
 	}
 
 	func TambahTugas(toko *TokoTugas, judul string) (Task, error) {
+		if strings.TrimSpace(judul) == "" {
+			return Task{}, ErrInputKosong
+		}
+		
 		toko.NextID = toko.NextID + 1
 		id := toko.NextID
 		
