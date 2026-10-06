@@ -126,7 +126,9 @@ func (m *MemoryStore) Get(id int) (Task, error) {
 
 // List mengembalikan seluruh tugas. (Level 5)
 func (m *MemoryStore) List() []Task {
-	panic("belum diimplementasikan")
+	hasil := make([]Task, len(m.tugas))
+	copy(hasil, m.tugas)
+	return hasil
 }
 
 // Delete menghapus tugas menurut ID. (Level 6)

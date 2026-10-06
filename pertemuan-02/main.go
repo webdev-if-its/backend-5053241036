@@ -105,3 +105,11 @@ func HitungOngkosKirim(beratKg float64, jarakKm float64) (float64, error) {
 func main() {
 	fmt.Println("Sales Order Processor - pertemuan 2")
 }
+
+func masak() {
+    fmt.Println("mulai masak")
+    defer fmt.Println("cuci piring")   // "nanti ya, cuci piringnya"
+    fmt.Println("goreng telur")
+    fmt.Println("selesai masak")
+}
+
