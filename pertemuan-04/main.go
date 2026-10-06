@@ -133,7 +133,14 @@ func (m *MemoryStore) List() []Task {
 
 // Delete menghapus tugas menurut ID. (Level 6)
 func (m *MemoryStore) Delete(id int) error {
-	panic("belum diimplementasikan")
+	for i, t := range m.tugas {
+		if t.ID == id {
+			m.tugas = append(m.tugas[:i], m.tugas[i+1:]...)
+			return nil
+		}
+	}
+	
+	return ErrTugasTidakDitemukan
 }
 
 // Filter mengembalikan elemen xs yang lolos pred. (Level 7)
