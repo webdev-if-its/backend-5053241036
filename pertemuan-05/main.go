@@ -80,8 +80,14 @@ func UnduhSemua(files []File, unduh Pengunduh) []Hasil {
 		wg.Add(1)
 		go func(i int, f File) {
 			defer wg.Done()
-			hasil[i] = unduh(f)
-		} (i, f)
+			defer func() {
+				if r := recover(); r != nil {
+					hasil[i] = Hasil{f.Nama, f.UkuranKB, fmt.Errorf("panic: %v", r),
+				}
+			}
+		} ()
+		hasil[i] = unduh(f)
+		}(i, f)
 	}
 	wg.Wait()
 	return hasil
