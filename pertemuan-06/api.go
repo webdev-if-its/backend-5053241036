@@ -113,7 +113,18 @@ func (a *API) createTask(w http.ResponseWriter, r *http.Request) {
 
 // GET /tasks/{id}
 func (a *API) getTask(w http.ResponseWriter, r *http.Request) {
-	panic("belum diimplementasikan")
+	id, err := parseID(r)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	task, err := a.store.Get(id)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, task)
 }
 
 // PUT /tasks/{id}
