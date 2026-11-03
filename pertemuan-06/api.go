@@ -6,6 +6,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"log"
 )
 
 
@@ -90,8 +91,9 @@ func writeError(w http.ResponseWriter, err error) {
 	case errors.Is(err, ErrInputKosong):
 		writeJSON(w, http.StatusBadRequest, errorBody{Error: "input tidak boleh kosong"})
 	default:
-		writeJSON(w, http.StatusInternalServerError, errorBody{Error: err.Error()})
-		
+		log.Printf("Error tidak terduga: %v", err)
+		writeJSON(w, http.StatusInternalServerError, errorBody{Error: "terjadi kesalahan internal"})
+
 	}
 }
 
