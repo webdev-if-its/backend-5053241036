@@ -1,0 +1,113 @@
+package main
+
+import (
+	"net/http"
+	"encoding/json"
+	"errors"
+	"strconv"
+	"strings"
+)
+
+
+// TODO: lihat SOAL.md untuk kontrak lengkap. Ganti setiap "panic" dengan
+// implementasi yang benar; tambahkan import (encoding/json, errors, log,
+// strconv, ...) sendiri kalau dibutuhkan.
+
+var(
+	errIDBukanAngka = errors.New("ID harusnya berisi angka")
+	errBodyInvalid = errors.New("body bukan JSON valid")
+)
+
+func parseID(r *http.Request) (int, error) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		return 0, errIDBukanAngka
+	}
+	return id, nil
+}
+
+func decodeInput(r *http.Request) (taskInput, error) {
+	var in taskInput
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		return taskInput{}, errBodyInvalid
+	}
+	if strings.TrimSpace(in.Judul) == "" {
+		return taskInput{}, ErrInputKosong
+	}
+	return in, nil
+}
+
+// taskInput adalah bentuk JSON yang boleh dikirim klien untuk POST/PUT.
+// Sengaja TIDAK memuat ID -- ID bukan urusan klien.
+type taskInput struct {
+	Judul   string `json:"judul"`
+	Selesai bool   `json:"selesai"`
+}
+
+// errorBody adalah bentuk JSON semua respons error: {"error":"pesan"}.
+type errorBody struct {
+	Error string `json:"error"`
+}
+
+// API menyatukan routing dan handler HTTP di atas sebuah TaskStore.
+type API struct {
+	store TaskStore
+}
+
+// NewAPI membuat API di atas store (interface, bukan MemoryStore).
+func NewAPI(store TaskStore) *API {
+	return &API{store: store}
+}
+
+// Routes mendaftarkan semua endpoint memakai pola Go 1.22 ("METHOD /path").
+func (a *API) Routes() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /tasks", a.listTasks)
+	mux.HandleFunc("POST /tasks", a.createTask)
+	mux.HandleFunc("GET /tasks/{id}", a.getTask)
+	mux.HandleFunc("PUT /tasks/{id}", a.updateTask)
+	mux.HandleFunc("DELETE /tasks/{id}", a.deleteTask)
+	return mux
+}
+
+// writeJSON menulis v sebagai JSON dengan status yang diminta.
+// Urutan WAJIB: Header().Set(Content-Type) -> WriteHeader(status) -> Encode.
+func writeJSON(w http.ResponseWriter, status int, v any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(v)
+}
+
+// writeError menerjemahkan error aplikasi menjadi status + body errorBody.
+func writeError(w http.ResponseWriter, err error) {
+	panic("belum diimplementasikan")
+}
+
+// GET /tasks
+func (a *API) listTasks(w http.ResponseWriter, r *http.Request) {
+	tasks := a.store.List()
+	if tasks == nil {
+		tasks = []Task{}
+	}
+	writeJSON(w, http.StatusOK, tasks)
+}
+
+// POST /tasks
+func (a *API) createTask(w http.ResponseWriter, r *http.Request) {
+	panic("belum diimplementasikan")
+}
+
+// GET /tasks/{id}
+func (a *API) getTask(w http.ResponseWriter, r *http.Request) {
+	panic("belum diimplementasikan")
+}
+
+// PUT /tasks/{id}
+func (a *API) updateTask(w http.ResponseWriter, r *http.Request) {
+	panic("belum diimplementasikan")
+}
+
+// DELETE /tasks/{id}
+func (a *API) deleteTask(w http.ResponseWriter, r *http.Request) {
+	panic("belum diimplementasikan")
+}
