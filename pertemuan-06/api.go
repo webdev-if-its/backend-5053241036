@@ -80,7 +80,11 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 
 // writeError menerjemahkan error aplikasi menjadi status + body errorBody.
 func writeError(w http.ResponseWriter, err error) {
-	panic("belum diimplementasikan")
+	if errors.Is(err, ErrTugasTidakDitemukan) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.WriteHeader(http.StatusInternalServerError)
 }
 
 // GET /tasks
@@ -155,5 +159,15 @@ func (a *API) updateTask(w http.ResponseWriter, r *http.Request) {
 
 // DELETE /tasks/{id}
 func (a *API) deleteTask(w http.ResponseWriter, r *http.Request) {
-	panic("belum diimplementasikan")
+	id, err := parseID(r)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	if err := a.store.Delete(id); err != nil {
+		writeError(w, err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
