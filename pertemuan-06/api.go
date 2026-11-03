@@ -94,7 +94,21 @@ func (a *API) listTasks(w http.ResponseWriter, r *http.Request) {
 
 // POST /tasks
 func (a *API) createTask(w http.ResponseWriter, r *http.Request) {
-	panic("belum diimplementasikan")
+	in, err := decodeInput(r)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	task, err := a.store.Add(Task{
+		Judul:   in.Judul,
+		Selesai: in.Selesai,
+	})
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusCreated, task)
 }
 
 // GET /tasks/{id}
