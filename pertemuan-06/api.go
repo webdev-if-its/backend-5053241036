@@ -129,7 +129,28 @@ func (a *API) getTask(w http.ResponseWriter, r *http.Request) {
 
 // PUT /tasks/{id}
 func (a *API) updateTask(w http.ResponseWriter, r *http.Request) {
-	panic("belum diimplementasikan")
+	id, err := parseID(r)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	in, err := decodeInput(r)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	task, err := a.store.Update(Task{
+		ID:      id,
+		Judul:   in.Judul,
+		Selesai: in.Selesai,
+	})
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, task)
 }
 
 // DELETE /tasks/{id}
