@@ -80,11 +80,16 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 
 // writeError menerjemahkan error aplikasi menjadi status + body errorBody.
 func writeError(w http.ResponseWriter, err error) {
-	if errors.Is(err, ErrTugasTidakDitemukan) {
-		w.WriteHeader(http.StatusNotFound)
-		return
+	switch {
+		case errors.Is(err, ErrTugasTidakDitemukan):
+			w.WriteHeader(http.StatusNotFound)
+		case errors.Is(err, errIDBukanAngka),
+			errors.Is(err, errBodyInvalid), 
+			errors.Is(err, ErrInputKosong):
+			w.WriteHeader(http.StatusBadRequest)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
 	}
-	w.WriteHeader(http.StatusInternalServerError)
 }
 
 // GET /tasks
