@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"log"
 	"time"
+	"runtime/debug"
 )
 
 // TODO: lihat SOAL.md untuk kontrak lengkap. Ganti setiap "panic" dengan
@@ -60,6 +61,7 @@ func Recover(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if rec := recover(); rec != nil {
+				log.Printf("panic: %v\n%s", rec, debug.Stack())
 				writeJSON(w, http.StatusInternalServerError, errorBody{Error: "terjadi kesalahan internal"})
 			}
 		}()
