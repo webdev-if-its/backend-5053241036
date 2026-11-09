@@ -13,10 +13,11 @@ import (
 // implementasi yang benar; tambahkan import (encoding/json, errors, log,
 // strconv, ...) sendiri kalau dibutuhkan.
 
-var(
-	errIDBukanAngka = errors.New("ID harusnya berisi angka")
-	errBodyInvalid = errors.New("body bukan JSON valid")
+var (
+	errIDBukanAngka = errors.New("id harus berupa angka")
+	errBodyInvalid  = errors.New("body bukan JSON yang valid")
 )
+
 
 func parseID(r *http.Request) (int, error) {
 	id, err := strconv.Atoi(r.PathValue("id"))
@@ -82,13 +83,15 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 func writeError(w http.ResponseWriter, err error) {
 	switch {
 	case errors.Is(err, ErrTugasTidakDitemukan):
-		w.WriteHeader(http.StatusNotFound)
-	case errors.Is(err, ErrInputKosong),
-		errors.Is(err, errIDBukanAngka),
-		errors.Is(err, errBodyInvalid):
-		w.WriteHeader(http.StatusBadRequest)
+		writeJSON(w, http.StatusNotFound, errorBody{Error: "tugas tidak ditemukan"})
+	case errors.Is(err, ErrInputKosong):
+		writeJSON(w, http.StatusBadRequest, errorBody{Error: "input tidak boleh kosong"})
+	case errors.Is(err, errIDBukanAngka):
+		writeJSON(w, http.StatusBadRequest, errorBody{Error: "id harus berupa angka"})
+	case errors.Is(err, errBodyInvalid):
+		writeJSON(w, http.StatusBadRequest, errorBody{Error: "body bukan JSON yang valid"})
 	default:
-		w.WriteHeader(http.StatusInternalServerError)
+		writeJSON(w, http.StatusInternalServerError, errorBody{Error: "terjadi kesalahan internal"})
 	}
 }
 
