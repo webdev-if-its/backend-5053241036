@@ -6,7 +6,6 @@ import (
 	"errors"
 	"strconv"
 	"strings"
-	"log"
 )
 
 
@@ -83,17 +82,13 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 func writeError(w http.ResponseWriter, err error) {
 	switch {
 	case errors.Is(err, ErrTugasTidakDitemukan):
-		writeJSON(w, http.StatusNotFound, errorBody{Error: "tugas tidak ditemukan"})
-	case errors.Is(err, errIDBukanAngka):
-		writeJSON(w, http.StatusBadRequest, errorBody{Error: "id harus berupa angka"})
-	case errors.Is(err, errBodyInvalid):
-		writeJSON(w, http.StatusBadRequest, errorBody{Error: "body bukan JSON yang valid"})
-	case errors.Is(err, ErrInputKosong):
-		writeJSON(w, http.StatusBadRequest, errorBody{Error: "input tidak boleh kosong"})
+		w.WriteHeader(http.StatusNotFound)
+	case errors.Is(err, ErrInputKosong),
+		errors.Is(err, errIDBukanAngka),
+		errors.Is(err, errBodyInvalid):
+		w.WriteHeader(http.StatusBadRequest)
 	default:
-		log.Printf("Error tidak terduga: %v", err)
-		writeJSON(w, http.StatusInternalServerError, errorBody{Error: "terjadi kesalahan internal"})
-
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
