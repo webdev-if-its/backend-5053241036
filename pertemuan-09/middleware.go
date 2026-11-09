@@ -25,12 +25,16 @@ func Chain(h http.Handler, mws ...Middleware) http.Handler {
 type statusRecorder struct {
 	http.ResponseWriter
 	status int
+	wroteHeader bool
 }
 
 // WriteHeader mencatat status lalu meneruskannya ke ResponseWriter asli.
 // Hanya panggilan PERTAMA yang dicatat. (Level 2)
 func (sr *statusRecorder) WriteHeader(code int) {
-	sr.status = code
+	if !sr.wroteHeader {
+		sr.status = code
+		sr.wroteHeader = true
+	}
 	sr.ResponseWriter.WriteHeader(code)
 }
 
