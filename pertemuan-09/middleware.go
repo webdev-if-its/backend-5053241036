@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/http"
+	"log"
+	"time"
 )
 
 // TODO: lihat SOAL.md untuk kontrak lengkap. Ganti setiap "panic" dengan
@@ -28,13 +30,19 @@ type statusRecorder struct {
 // WriteHeader mencatat status lalu meneruskannya ke ResponseWriter asli.
 // Hanya panggilan PERTAMA yang dicatat. (Level 2)
 func (sr *statusRecorder) WriteHeader(code int) {
-	panic("belum diimplementasikan")
+	sr.status = code
+	sr.ResponseWriter.WriteHeader(code)
 }
 
 // Logging mencatat SATU baris per request lewat log.Printf dengan format
 // "%s %s %d %v" -> method, path, status, durasi. (Level 1-2)
 func Logging(next http.Handler) http.Handler {
-	panic("belum diimplementasikan")
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mulai := time.Now()
+		sr := &statusRecorder{ResponseWriter: w, status: http.StatusOK}
+		next.ServeHTTP(sr, r)
+		log.Printf("%s %s %d %v", r.Method, r.URL.Path, sr.status, time.Since(mulai))
+	})
 }
 
 // Recover menangkap panic dari handler di bawahnya: catat ke log (pesan +
