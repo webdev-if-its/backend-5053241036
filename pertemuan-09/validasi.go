@@ -1,5 +1,10 @@
 package main
 
+import (
+	"strings"
+	"unicode/utf8"
+)
+
 // ValidationError membawa alasan penolakan per field, mis.
 // {"judul": "tidak boleh kosong"}. (Level 7)
 type ValidationError struct {
@@ -9,11 +14,25 @@ type ValidationError struct {
 // Error mengembalikan teks "validasi gagal" (supaya *ValidationError memenuhi
 // interface error). (Level 7)
 func (e *ValidationError) Error() string {
-	panic("belum diimplementasikan")
+	return "validasi gagal"
 }
 
 // ValidasiTugas memeriksa input tugas. Kembalikan nil kalau valid, atau
 // *ValidationError berisi SEMUA field yang bermasalah. (Level 7)
 func ValidasiTugas(in taskInput) error {
-	panic("belum diimplementasikan")
+	fields := map[string]string{}
+
+	judul := strings.TrimSpace(in.Judul)
+	switch {
+		case judul == "":
+			fields["judul"] = "tidak boleh kosong"
+		case utf8.RuneCountInString(judul) > 100:
+			fields["judul"] = "maksimal 100 karakter"
+	}
+
+	if len(fields) > 0 {
+		return &ValidationError{Fields: fields}
+	}
+	return nil
+
 }
