@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 	"runtime/debug"
+	"mime"
 )
 
 // TODO: lihat SOAL.md untuk kontrak lengkap. Ganti setiap "panic" dengan
@@ -72,7 +73,19 @@ func Recover(next http.Handler) http.Handler {
 // RequireJSON menolak POST/PUT/PATCH yang Content-Type-nya bukan
 // application/json dengan 415. (Level 9)
 func RequireJSON(next http.Handler) http.Handler {
-	panic("belum diimplementasikan")
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost, http.MethodPut, http.MethodPatch:
+			mt, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+			if err != nil || mt != "application/json" {
+				writeJSON(w, http.StatusUnsupportedMediaType,
+					errorBody{Error: "Content-Type harus application/json"})
+				return
+			}
+		}
+
+		next.ServeHTTP(w, r)
+	})	
 }
 
 // NewHandler menyusun API + seluruh middleware menjadi satu http.Handler yang
