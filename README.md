@@ -45,3 +45,8 @@ gitignore penting untuk tidak membuat repo jadi penuh oleh file/folder yang tida
 
 ## Refleksi
 Saya pernah mengalami merge conflict seperti ini ketika bekerja dengan tim, dan pada saat itu memang dibenarkan secara manual. Tapi pada tugas ini saya baru menyadari bahwa ada perbedaan simbol yang menunjukkan batas versi 1/branch awal dan versi 2/branch lain yang lagi conflict. Sehingga dari situ bisa di identifikasi bagian kode/versi mana yang mau digunakan saat resolve
+
+## Analisis Pertemuan 4
+1. Semua method yang ada di MemoryStore itu kan memakai pointer receiver, misal func (m *MemoryStore) .... karna di Go ada yang namanya method set (kumpulan method yang dimiliki oleh suatu tipe) nah, MemoryStore sebagai value biasa itu gak punya method method dengan pointer receiver di dalam method set nya. Sedangkan *MemoryStore sebagai pointer punya semua method itu. Makanya, waktu pakai MemoryStore{}, tipe itu belum memenuhi interface TaskStore nya. Sementara NewMemoryStore() berhasil ya karma mengembalikan pointer ke MemoryStore, jadi semua method yang dibutuhkan sudah tersedia.
+
+2. Karna Get mengembalikan Task sebagai copy an dari data yang ada di store. Jadi, kalau hasilnya diubah, data asli di dalam store gak ikut berubah. Keuntungannya, data asli jadi lebih aman karena gak bisa diubah sembarangan dari luar. Tapi kalau memang mau ngubah data brarti harus lewat method yang disediakan store. Kalau pakai pointer, data asli bisa diubah langsung tanpa harus lewat store. Trus, penggunaan interface juga membuat kode gak bergantung pada satu jenis struct tertentu. jadi penyimpanan bisa diganti, misalnya dari memory ke database tanpa harus mengubah kode yang manggil dia.

@@ -76,7 +76,11 @@ func (t *Task) Rename(judul string) error {
 
 // String membuat Task memenuhi fmt.Stringer. (Level 10)
 func (t Task) String() string {
-	panic("belum diimplementasikan")
+	tanda := " "
+	if t.Selesai {
+		tanda = "x"
+	}
+	return fmt.Sprintf("[%s] %d. %s", tanda, t.ID, t.Judul)
 }
 
 // TaskStore adalah kontrak penyimpanan tugas. JANGAN diubah -- yang kalian
@@ -198,7 +202,11 @@ func Max[T cmp.Ordered](xs []T) (T, error) {
 
 // Gabung menyambung String() tiap elemen dengan pemisah sep. (Level 10)
 func Gabung[T fmt.Stringer](xs []T, sep string) string {
-	panic("belum diimplementasikan")
+	bagian := make([]string, 0, len(xs))
+	for _, x := range xs {
+		bagian = append(bagian, x.String())
+	}
+	return strings.Join(bagian, sep)
 }
 
 func main() {
