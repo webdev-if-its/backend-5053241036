@@ -55,3 +55,39 @@ Saya pernah mengalami merge conflict seperti ini ketika bekerja dengan tim, dan 
 1. Di UnduhSemua, tiap goroutine mengisi indeks yang beda di slice hasil. Nah karna masing masing goroutine  itu ngubah elemen yang berbeda, jadi gak ada data yang saling tabrakan dan gak perlu pakai Mutex juga. Beda sama selesai++, karna semua goroutine nya ngubah variabel yang sama. Kalau beberapa goroutine melakukan baca nilai, nambah 1, dan nyimpan hasil secara bersamaan, kemungkiann bisa terjadi race condition, di mana hasil akhirnya bisa gak sesuai karna ada perubahan yang saling timpa. Makanya perlu adanya Mutex itu supaya proses mengubah nilai selesai dilakukan secara bergantian
 
 2. Kalau wg.Add(1) ditulis di dalam goroutine, ada kemungkinan fungsi utama sudah sampai ke wg.Wait() sebelum goroutine sempat menjalankan Add(1). Trus karna counter WaitGroup masih 0, Wait() akan menganggap gak ada goroutine yang perlu ditunggu dan langsung lanjut aja. Nanti mengakibatkan fungsi utama bisa selesai duluan padahal goroutine nya masih jalan. Jadi wg.Add(1) harus dipanggil sebelum go biar jumlah goroutine yang perlu ditunggu sudah tercatat dari awal.
+
+## Dokumentasi API Task Manager
+
+| Method | Endpoint | Status Sukses | Status Gagal |
+|---|---|---|---|
+| `GET` | `/tasks` | 200 | - |
+| `POST` | `/tasks` | 201 | 400 |
+| `GET` | `/tasks/{id}` | 200 | 400, 404 |
+| `PUT` | `/tasks/{id}` | 200 | 400, 404 |
+| `DELETE` | `/tasks/{id}` | 204 | 400, 404 |
+
+(selain status di atas, API juga mengembalikan `500 Internal Server Error` kalau terjadi kesalahan internal)
+
+**Contoh request** untuk menambahkan tugas (`POST /tasks`):
+
+\```json
+{
+  "judul": "Belajar REST API",
+  "selesai": false
+}
+\```
+
+**Contoh respons error:**
+
+\```json
+{
+  "error": "tugas tidak ditemukan"
+}
+\```
+
+ID tugas dibuat otomatis sama store (jadi gak perlu isi ID waktu bikin tugas baru), kalau misal mau mengubah atau menghapus tugas, ID yang dipakai diambil dari path URL
+
+ID yang bukan angka menghasilkan 400, bukan 404 Karna kalau ID bukan angka, brarti format request yang dikirim sudah salah dari awal, server jadi gak bisa melanjutkan proses pencarian tugas. Sedangkan 404 dipakai kalau format ID sudah benar, tapi tugas dengan ID itu memang gak ditemukan.
+
+Kenapa error 500 tidak menampilkan detail error aslinya?
+Karna pesan error tuh bisa aja berisi informasi internal server yang gak seharusnya diketahui user, misal detail database atau konfigurasi server. Jadi klien cukup nerima pesan error secara umum aja, sedangkan detail penyebabnya itu tetap disimpan di log server pakai `log.Printf`. Jadi developer tetap bisa cari tahu masalahnya tanpa membocorkan informasi internal ke user/pengguna
