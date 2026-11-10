@@ -169,29 +169,39 @@ type Ringkasan struct {
 
 // String memformat ringkasan untuk laporan. (Level 10)
 func (r Ringkasan) String() string {
-	panic("belum diimplementasikan")
+	return fmt.Sprintf("%d dari %d berhasil, %d gagal, total %d KB", r.Selesai, r.Total, r.Gagal, r.TotalKB)
 }
 
 // Progres mencatat progres unduhan dan AMAN dipakai banyak goroutine
 // sekaligus. (Level 10)
 type Progres struct {
 	mu sync.Mutex
-	// TODO: tambahkan field penghitung yang kalian butuhkan
+	r Ringkasan
 }
 
 // NewProgres membuat Progres untuk `total` unduhan. (Level 10)
 func NewProgres(total int) *Progres {
-	panic("belum diimplementasikan")
+	return &Progres{r: Ringkasan{Total: total}}
 }
 
 // Catat mencatat satu hasil unduhan. (Level 10)
 func (p *Progres) Catat(h Hasil) {
-	panic("belum diimplementasikan")
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if h.Err != nil {
+		p.r.Gagal++
+		return
+	}
+
+	p.r.Selesai++
+	p.r.TotalKB += h.UkuranKB
 }
 
 // Snapshot mengembalikan potret progres saat ini. (Level 10)
 func (p *Progres) Snapshot() Ringkasan {
-	panic("belum diimplementasikan")
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.r
 }
 
 func main() {
