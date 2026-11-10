@@ -91,3 +91,10 @@ ID yang bukan angka menghasilkan 400, bukan 404 Karna kalau ID bukan angka, brar
 
 Kenapa error 500 tidak menampilkan detail error aslinya?
 Karna pesan error tuh bisa aja berisi informasi internal server yang gak seharusnya diketahui user, misal detail database atau konfigurasi server. Jadi klien cukup nerima pesan error secara umum aja, sedangkan detail penyebabnya itu tetap disimpan di log server pakai `log.Printf`. Jadi developer tetap bisa cari tahu masalahnya tanpa membocorkan informasi internal ke user/pengguna
+
+## Analisis Pertemuan 9
+1. Kenapa Recover harus berada di dalam Logging?
+Di Logging(Recover(h)), Logging menunggu proses di dalamnya selesai dulu, baru mencatat hasil request. Kalau panic terjadi, recover bakal nangkep dan mengirim response 500. Jadi Logging tetap bisa mencatat request itu. Tapi kalau urutannya dibalik jadi recover(Logging(h)), proses di Logging nya bakal berhenti waktu panic terjadi sebelum log.Printf dijalankan. Nanti akibatnya request yang mengalami panic gak tercatat di log
+
+2. Apakah Recover bisa menangkap panic di goroutine baru?
+Tidak. Soalnya recover() cuman bisa menangkap panic yang terjadi di goroutine yang sama dengan defer nya. Kalau handler bikin goroutine baru, goroutine itu nanti punya proses sendiri dan gak melewati recover punya handler. Jadi panic di situ gak akan tertangkap dan bisa buat seluruh program berhenti. Makany goroutine baru harus punya defer dan recover() sendiri
